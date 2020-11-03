@@ -20,6 +20,10 @@ namespace Proekt.WeaponManagement
         [SerializeField] private SpawnedEvent m_OnSpawned;
         #endregion
 
+        #region Variables
+        private Transform m_TransformCache;
+        #endregion
+
         private void Start()
         {
             TrySpawnWeapon();
@@ -34,6 +38,8 @@ namespace Proekt.WeaponManagement
         public uint count { get => m_Count; }
 
         public SpawnedEvent onSpawned { get => m_OnSpawned; set => m_OnSpawned = value; }
+
+        private Transform transformCache { get => m_TransformCache != null ? m_TransformCache : m_TransformCache = GetComponent<Transform>(); }
         #endregion
 
         #region Methods
@@ -42,9 +48,14 @@ namespace Proekt.WeaponManagement
         /// </summary>
         public void TrySpawnWeapon()
         {
+            TrySpawnWeapon(transformCache.position, transformCache.rotation, null);
+        }
+
+        public void TrySpawnWeapon(Vector3 position, Quaternion rotation, Transform parent)
+        {
             if (HaveWeapon())
             {
-                Weapon weapon = Instantiate(m_Prefab, transform.position, transform.rotation, null).GetComponent<Weapon>();
+                Weapon weapon = Instantiate(m_Prefab, position, rotation, parent).GetComponent<Weapon>();
                 m_OnSpawned.Invoke(weapon);
                 m_Count--;
             }
